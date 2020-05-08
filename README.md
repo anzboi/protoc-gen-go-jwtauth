@@ -15,7 +15,7 @@ $ go install .
 Make sure to include the `jwtauthoption.proto` in your proto import paths. Add the following import and options to your proto specs
 
 ```proto
-import jwtauthoption.proto
+import "jwtauthoption.proto";
 
 service Foo {
     rpc Bar(RequestMessage) returns (ResponseMessage) {
