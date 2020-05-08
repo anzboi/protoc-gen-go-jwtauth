@@ -3,7 +3,7 @@ package main
 import (
 	"bytes"
 
-	"github.com/anzx/pkg/protoc-gen-gojwtauth/jwtauthoption"
+	"github.com/anzx/pkg/protoc-gen-go-jwtauth/jwtauthoption"
 	pgs "github.com/lyft/protoc-gen-star"
 )
 
@@ -26,20 +26,31 @@ func (p *jwtauthModule) Execute(targets map[string]pgs.File, packages map[string
 		pgs.Walk(visitor, pkg)
 	}
 	p.Debug(visitor.scopes)
-	p.AddGeneratorFile("name.cli.go", buf.String())
+
+	var data = struct {
+		Package string
+		Methods map[pgs.Method][]string
+	}{
+		Package: "pkg",
+		Methods: visitor.scopes,
+	}
+	if err := jwtauthTemplate.Execute(&buf, data); err != nil {
+		panic(err)
+	}
+	p.AddGeneratorFile("name.jwtauth.go", buf.String())
 	return p.Artifacts()
 }
 
 type JwtauthVisitor struct {
 	pgs.Visitor
 	pgs.DebuggerCommon
-	scopes map[string][]string
+	scopes map[pgs.Method][]string
 }
 
 func NewJwtauthVisitor(debugger pgs.DebuggerCommon) *JwtauthVisitor {
 	return &JwtauthVisitor{
 		Visitor: pgs.NilVisitor(),
-		scopes:  map[string][]string{},
+		scopes:  map[pgs.Method][]string{},
 	}
 }
 
@@ -55,7 +66,7 @@ func (j *JwtauthVisitor) VisitMethod(method pgs.Method) (v pgs.Visitor, err erro
 	if ok, err := method.Extension(jwtauthoption.E_Scopes, &scopes); err != nil {
 		return nil, err
 	} else if ok {
-		j.scopes[method.FullyQualifiedName()] = scopes
+		j.scopes[method] = scopes
 	}
 	return nil, nil
 }

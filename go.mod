@@ -1,4 +1,4 @@
-module github.com/anzx/pkg/protoc-gen-gojwtauth
+module github.com/anzx/pkg/protoc-gen-go-jwtauth
 
 go 1.14
 
