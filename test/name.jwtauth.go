@@ -1,13 +1,17 @@
-
 package pkg
 
 import (
 	"github.com/anzx/pkg/jwtauth"
 )
 
-
 func ValidateHelloScopes(claims jwtauth.Claims) bool {
-	return claims.HasScopes(["fabric.read","fabric.write"])
+	if claims.HasAllScopes([]string{"your.scope.read", "your.scope.write"}) {
+		return true
+	}
+	if claims.HasAllScopes([]string{"another.scope"}) {
+		return true
+	}
+	return false
 }
 
 func ValidateScopes(claims jwtauth.Claims, methodName string) bool {

@@ -18,7 +18,7 @@ var (
 			return servicePath + "/" + methodPath
 		},
 		"StringArray": func(strs []string) string {
-			return `["` + strings.Join(strs, `","`) + `"]`
+			return `[]string{"` + strings.Join(strs, `","`) + `"}`
 		},
 	}
 
@@ -29,15 +29,20 @@ import (
 	"github.com/anzx/pkg/jwtauth"
 )
 
-{{ range $method, $scopes := .Methods}}
+{{ range $method, $scopesArr := .Methods}}
 func Validate{{ShortMethodName $method}}Scopes(claims jwtauth.Claims) bool {
-	return claims.HasScopes({{StringArray $scopes}})
+	{{- range $i, $scopes := $scopesArr}}
+	if claims.HasAllScopes({{StringArray $scopes.And}}) {
+		return true
+	}
+	{{- end}}
+	return false
 }
 {{- end}}
 
 func ValidateScopes(claims jwtauth.Claims, methodName string) bool {
 	switch methodName {
-		{{- range $method, $scopes := .Methods}}
+		{{- range $method, $scopesArr := .Methods}}
 	case "{{FullMethodPath $method}}":
 		return Validate{{ShortMethodName $method}}Scopes(claims)
 		{{- end }}

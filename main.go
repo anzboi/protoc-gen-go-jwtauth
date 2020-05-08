@@ -2,6 +2,7 @@ package main
 
 import (
 	pgs "github.com/lyft/protoc-gen-star"
+	pgsgo "github.com/lyft/protoc-gen-star/lang/go"
 )
 
 func main() {
@@ -9,5 +10,7 @@ func main() {
 		pgs.DebugEnv("DEBUG"),
 	).RegisterModule(
 		JwtauthModule(),
-	).RegisterPostProcessor().Render()
+	).RegisterPostProcessor(
+		pgsgo.GoFmt(),
+	).Render()
 }

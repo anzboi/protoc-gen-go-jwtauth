@@ -7,5 +7,9 @@ import "google/protobuf/descriptor.proto";
 option go_package = "jwtauthoption";
 
 extend google.protobuf.MethodOptions {
-    repeated string scopes = 120645591;
+    repeated Scopes scopes = 120645591;
+}
+
+message Scopes {
+    repeated string and = 1;
 }

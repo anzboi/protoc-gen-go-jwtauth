@@ -9,8 +9,13 @@ option go_package = "test";
 
 service Hello {
     rpc Hello (HelloRequest) returns (HelloResponse) {
-        option (jwtauth.scopes) = "your.scope.read";
-        option (jwtauth.scopes) = "your.scope.write";
+        option (jwtauth.scopes) = {
+            and: "your.scope.read"
+            and: "your.scope.write"
+        };
+        option (jwtauth.scopes) = {
+            and: "another.scope"
+        };
     };
 }
 

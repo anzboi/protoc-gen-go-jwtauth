@@ -27,9 +27,9 @@ func (p *jwtauthModule) Execute(targets map[string]pgs.File, packages map[string
 	}
 	p.Debug(visitor.scopes)
 
-	var data = struct {
+	data := struct {
 		Package string
-		Methods map[pgs.Method][]string
+		Methods map[pgs.Method][]*jwtauthoption.Scopes
 	}{
 		Package: "pkg",
 		Methods: visitor.scopes,
@@ -44,13 +44,13 @@ func (p *jwtauthModule) Execute(targets map[string]pgs.File, packages map[string
 type JwtauthVisitor struct {
 	pgs.Visitor
 	pgs.DebuggerCommon
-	scopes map[pgs.Method][]string
+	scopes map[pgs.Method][]*jwtauthoption.Scopes
 }
 
 func NewJwtauthVisitor(debugger pgs.DebuggerCommon) *JwtauthVisitor {
 	return &JwtauthVisitor{
 		Visitor: pgs.NilVisitor(),
-		scopes:  map[pgs.Method][]string{},
+		scopes:  map[pgs.Method][]*jwtauthoption.Scopes{},
 	}
 }
 
@@ -59,7 +59,7 @@ func (j *JwtauthVisitor) VisitFile(pgs.File) (v pgs.Visitor, err error)       { 
 func (j *JwtauthVisitor) VisitService(pgs.Service) (v pgs.Visitor, err error) { return j, nil }
 
 func (j *JwtauthVisitor) VisitMethod(method pgs.Method) (v pgs.Visitor, err error) {
-	scopes := []string{}
+	scopes := []*jwtauthoption.Scopes{}
 	if !method.BuildTarget() {
 		return nil, nil
 	}
