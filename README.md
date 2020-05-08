@@ -19,13 +19,25 @@ import jwtauthoption.proto
 
 service Foo {
     rpc Bar(RequestMessage) returns (ResponseMessage) {
-        option (jwtauth.scopes) = "your.scope";
-        option (jwtauth.scopes) = "another.scope";
-    }
+        option (jwtauth.scopes) = {
+            and: "your.scope"
+            and: "another.scope"
+        };
+        option (jwtauth.scopes) = {
+            and: "why.not.a.third.scope"
+        };
+    };
 }
 ```
 
-Currently scopes are intersecting, defining two requires that both scopes are present in the caller token.
+The structure of scopes options allows for arbitrary combinations of scopes joined under intersection and union (AND and OR logic). Scopes separated by an `option (jwtauth.Scopes)` block obey `OR` logic, while scopes inside an `option` block obey `AND` logic.
+
+The above example will validate scopes if they have
+```
+your.scopes AND another.scope
+OR
+why.not.a.third.scope
+```
 
 ## Run
 
