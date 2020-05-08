@@ -1,0 +1,23 @@
+syntax = 'proto3';
+
+package test;
+
+import "google/protobuf/descriptor.proto";
+import "jwtauthoption.proto";
+
+option go_package = "test";
+
+service Hello {
+    rpc Hello (HelloRequest) returns (HelloResponse) {
+        option (jwtauth.scopes) = "your.scope.read";
+        option (jwtauth.scopes) = "your.scope.write";
+    };
+}
+
+message HelloRequest {
+    string name = 1;
+}
+
+message HelloResponse {
+    string message = 1;
+}
